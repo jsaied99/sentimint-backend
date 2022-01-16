@@ -3,11 +3,19 @@ from flask_cors import CORS
 import db_conn
 from time import time
 from twitter_api import get_tweets
+import werkzeug
 app = Flask(__name__)
+
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config["CORS_HEADER"] = "Content-Type"
 
+def page_not_found(e):
+  return jsonify({
+      "status": "error", 
+      "message": "wrong path"}), 404
+
+app.register_error_handler(404, page_not_found)
 
 @app.before_request
 def initialize_firebase():
