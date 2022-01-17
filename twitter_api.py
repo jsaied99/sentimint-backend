@@ -1,8 +1,7 @@
 import requests
+import os
 
-
-bearer_token = "Bearer AAAAAAAAAAAAAAAAAAAAACqUWAEAAAAA81etU%2FOQ0Okmt5N9maHM0%2B62loE%3DnyIIjT6DVpYVhSOAYJqJ8lZNX1i4v8XSzqIa1HQWpRAthgjdKh"
-
+bearer_token = os.environ["TWITTER_API_KEY"]
 
 def get_tweets(topic: str, limit=10) -> list:
     base_url = "https://api.twitter.com/2/tweets/search/recent?query={}&max_results={}".format(
