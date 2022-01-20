@@ -154,7 +154,7 @@ def update_text_twitter(db, collection, uid, data):
 
 
 def update_doc_twitter(db, collection, uid, text_array, topic):
-
+    
     uid_ref = db.collection(collection).document(uid)
 
     #if PRODUCTION
@@ -162,9 +162,16 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
     scores = analyze_multiple_texts(text_array)
     #endif PRODUCTION
     
+    average_tweet_length = 0
+    average_sentiment = 0
+    
     data = {
         'texts': [],
         'topic': topic,
+        'average_sentiment': 0,
+        'average_tweet_length': 0,
+        'average_sentiment_interpretation': '',
+        'tweet_count': len(text_array)
     }
 
     for text, score in zip(text_array, scores):
@@ -174,6 +181,20 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
             'score': score,
             'interpretation': interpretation
         })
+        
+        average_tweet_length += len(text)
+        average_sentiment += score
+    
+    average_tweet_length /= len(text_array)
+    average_tweet_length = int(average_tweet_length)
+    
+    average_sentiment /= len(text_array)
+    average_sentiment = round(average_sentiment, 2)
+    
+    data['average_sentiment'] = average_sentiment
+    data['average_tweet_length'] = average_tweet_length
+    
+    data['average_sentiment_interpretation'] = get_text_sentiment_interpretation(average_sentiment)
         
         
     if uid_ref.get().exists:
