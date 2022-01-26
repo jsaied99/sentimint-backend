@@ -131,12 +131,22 @@ def analyze_multiple_texts(texts: list):
     thread_pool = []
 
     global TEXT_PER_THREAD
+    
+    remainder = len(texts) % THREADS
 
     TEXT_PER_THREAD = int(len(texts)/THREADS)
+    
+        
 
     for i in range(THREADS):
         thread_pool.append(threading.Thread(
             target=get_text_sentiment_thread, args=(texts[i*TEXT_PER_THREAD:(i+1)*TEXT_PER_THREAD], analyzed_texts)))
+        
+    if remainder != 0:
+        print('remainder: ' + str(remainder))
+        print('last thread: ', len(texts[THREADS*TEXT_PER_THREAD:]))
+        thread_pool.append(threading.Thread(
+            target=get_text_sentiment_thread, args=(texts[THREADS*TEXT_PER_THREAD:], analyzed_texts)))
 
     for thread in thread_pool:
         thread.start()
