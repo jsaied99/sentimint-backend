@@ -143,8 +143,6 @@ def analyze_multiple_texts(texts: list):
             target=get_text_sentiment_thread, args=(texts[i*TEXT_PER_THREAD:(i+1)*TEXT_PER_THREAD], analyzed_texts)))
         
     if remainder != 0:
-        print('remainder: ' + str(remainder))
-        print('last thread: ', len(texts[THREADS*TEXT_PER_THREAD:]))
         thread_pool.append(threading.Thread(
             target=get_text_sentiment_thread, args=(texts[THREADS*TEXT_PER_THREAD:], analyzed_texts)))
 
@@ -171,7 +169,6 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
     # text_array = get_all_texts()
     scores = analyze_multiple_texts(text_array)
     #endif PRODUCTION
-    
     average_tweet_length = 0
     average_sentiment = 0
     
