@@ -7,6 +7,8 @@ import random
 from objects.text_sentiment import TextSentiment
 import nltk
 import threading
+import re
+import statistics
 # imports for NLTK
 nltk.download('vader_lexicon')
 #imports for flair sentiment anal
@@ -100,19 +102,19 @@ def get_text_sentiment_thread(text, analyzed_texts):
     sid = SentimentIntensityAnalyzer()
 
     for t in text:
-        analyzed_texts.append(sid.polarity_scores(t)['compound'])
+        analyzed_texts.append( int((sid.polarity_scores(t)['compound']) * 100) )
 
 
 def get_text_sentiment_interpretation(score):
-    if score > 0.6:
+    if score > 60:
         return 'Positive'
-    elif score >= 0.33 and score <= 0.6:
+    elif score >= 33 and score <= 60:
         return 'Somewhat Positive'
-    elif score <= -0.33 and score >= -0.6:
+    elif score <= -33 and score >= -60:
         return 'Somewhat Negative'
-    elif score < -0.33:
+    elif score < -33:
         return 'Negative'
-    elif score >= -0.33 and score < 0.33:
+    elif score >= -33 and score < 33:
         return 'Neutral'
     else:
         return 'Error'
@@ -126,11 +128,20 @@ def analyze_text_twitter(db, collection, uid, text, topic):
     return update_doc_twitter(db, collection, uid, text, topic)
 
 
+def prune_text(texts):
+    pruned_texts = []
+    for text in texts:
+        text = re.sub(r"(?:\@|https?\://)\S+", "", text)
+        pruned_texts.append(text.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
+    return pruned_texts
+
 def analyze_multiple_texts(texts: list):
     analyzed_texts = []
     thread_pool = []
 
     global TEXT_PER_THREAD
+    
+    prune_list = prune_text(texts)
     
     remainder = len(texts) % THREADS
 
@@ -178,7 +189,10 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         'average_sentiment': 0,
         'average_tweet_length': 0,
         'average_sentiment_interpretation': '',
-        'tweet_count': len(text_array)
+        'tweet_count': len(text_array),
+        'std': statistics.stdev(scores),
+        # population size
+        # STD
     }
 
     for text, score in zip(text_array, scores):
