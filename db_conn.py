@@ -190,7 +190,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         'average_tweet_length': 0,
         'average_sentiment_interpretation': '',
         'tweet_count': len(text_array),
-        'std': statistics.stdev(scores),
+        'std': round(statistics.stdev(scores), 2),
         # population size
         # STD
     }

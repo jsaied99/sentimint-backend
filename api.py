@@ -73,6 +73,7 @@ def analyze_tweet_topic():
         uid = body['uid']
         topic = body['topic']
         limit = int(body['limit']) if str(body['limit']).isnumeric() else -100
+        print(limit)
         
         if 10 < limit < 100:
             return jsonify({
