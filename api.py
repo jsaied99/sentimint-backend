@@ -75,7 +75,7 @@ def analyze_tweet_topic():
         limit = int(body['limit']) if str(body['limit']).isnumeric() else -100
         print(limit)
         
-        if 10 < limit or limit > 100:
+        if 10 > limit or limit > 100:
             return jsonify({
                 "data": [],
                 "error": "Limit must be between 10 and 100 and a multiple of 10",
