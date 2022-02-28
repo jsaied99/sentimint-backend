@@ -9,6 +9,7 @@ import nltk
 import threading
 import re
 import statistics
+import datetime
 # imports for NLTK
 nltk.download('vader_lexicon')
 #imports for flair sentiment anal
@@ -170,6 +171,14 @@ def update_text_twitter(db, collection, uid, data):
     db.collection(collection).document(uid).update({
         'queries': firestore.ArrayUnion([data])
     })
+def update_topic_scores(db, collection, uid, data):
+    print(data)
+    db.collection(collection).document(uid).update({
+        'average_sentiment' : firestore.ArrayUnion([data['average_sentiment']]),
+        # 'average_sentiment_interpretation' : firestore.ArrayUnion([data['average_sentiment_interpretation']]),
+        'average_tweet_length' : firestore.ArrayUnion([data['average_tweet_length']]),
+        'query_date' : firestore.ArrayUnion([data['query_date']]),
+    })
 
 
 def update_doc_twitter(db, collection, uid, text_array, topic):
@@ -194,6 +203,12 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         # population size
         # STD
     }
+    
+    topic_collection = 'twitter_topics'
+    document_id = topic
+    topic_ref = db.collection(topic_collection).document(document_id)
+    
+    
 
     for text, score in zip(text_array, scores):
         interpretation = get_text_sentiment_interpretation(score)
@@ -217,12 +232,30 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
     
     data['average_sentiment_interpretation'] = get_text_sentiment_interpretation(average_sentiment)
         
-        
+    
+    topic_data = {
+        'average_sentiment' : data['average_sentiment'],
+        # 'average_sentiment_interpretation' : data['average_sentiment_interpretation'],
+        'average_tweet_length' : data['average_tweet_length'],
+        'query_date' : datetime.datetime.now(),
+    }
+    
     if uid_ref.get().exists:
         update_text_twitter(db, collection, uid, data)
     else:
         # insert_doc(db, collection, uid, {"texts": data})
         insert_doc(db, collection, uid, {"queries": [data]})
+    
+    
+    if topic_ref.get().exists:
+        update_topic_scores(db, topic_collection, document_id, topic_data)
+    else:
+        insert_doc(db, topic_collection, document_id, {
+            'average_sentiment' : [data['average_sentiment']],
+            'average_tweet_length' : [data['average_tweet_length']],
+            'query_date' : [datetime.datetime.now()],
+            })
+        
     return data
 
 
@@ -256,3 +289,10 @@ def update_doc(db, collection, uid, text):
         }
         insert_doc(db, collection, uid, data)
     return data
+
+def get_data_by_topic(db, collection, topic):
+    topic_ref = db.collection(collection).document(topic)
+    if topic_ref.get().exists:
+        return topic_ref.get().to_dict()
+    else:
+        return None

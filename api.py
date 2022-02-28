@@ -63,6 +63,17 @@ def analyze_data():
         "execution_time": time() - start,
         "success": 1})
 
+@app.route('/topic/<topic>', methods=['GET', 'POST'])
+def get_topic_data(topic):
+    if hasattr(g, 'db'):
+        data = db_conn.get_data_by_topic(g.db, 'twitter_topics', topic)
+        
+        if data:
+            return jsonify({"data": data, "status": 1})
+        else:
+            return jsonify({"data": [], "status": 0, "error": "No data found"})
+
+    return jsonify({"data": [], "status": 0, "error": "No database connection"})
 
 @app.route('/twitter_api', methods=['GET', 'POST'])
 def analyze_tweet_topic():
@@ -73,7 +84,6 @@ def analyze_tweet_topic():
         uid = body['uid']
         topic = body['topic']
         limit = int(body['limit']) if str(body['limit']).isnumeric() else -100
-        print(limit)
         
         if 10 > limit or limit > 100:
             return jsonify({
