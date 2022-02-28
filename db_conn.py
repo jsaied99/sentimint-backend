@@ -296,3 +296,12 @@ def get_data_by_topic(db, collection, topic):
         return topic_ref.get().to_dict()
     else:
         return None
+
+def get_all_topics(db, collection):
+    topics = db.collection(collection).stream()
+    topics_list = []
+    for topic in topics:
+        topics_list.append({
+            topic.id: topic.to_dict()
+            })
+    return topics_list

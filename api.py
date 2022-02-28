@@ -75,6 +75,19 @@ def get_topic_data(topic):
 
     return jsonify({"data": [], "status": 0, "error": "No database connection"})
 
+
+@app.route('/all_topics', methods=['GET', 'POST'])
+def all_topics():
+    if hasattr(g, 'db'):
+        data = db_conn.get_all_topics(g.db, 'twitter_topics')
+        
+        if data:
+            return jsonify({"data": data, "status": 1})
+        else:
+            return jsonify({"data": [], "status": 0, "error": "No data found"})
+
+    return jsonify({"data": [], "status": 0, "error": "No database connection"})
+
 @app.route('/twitter_api', methods=['GET', 'POST'])
 def analyze_tweet_topic():
     body = request.get_json() if request.get_json() else request.args
