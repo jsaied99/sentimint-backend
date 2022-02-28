@@ -237,7 +237,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         'average_sentiment' : data['average_sentiment'],
         # 'average_sentiment_interpretation' : data['average_sentiment_interpretation'],
         'average_tweet_length' : data['average_tweet_length'],
-        'query_date' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        'query_date' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
     
     if uid_ref.get().exists:
@@ -253,7 +253,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         insert_doc(db, topic_collection, document_id, {
             'average_sentiment' : [data['average_sentiment']],
             'average_tweet_length' : [data['average_tweet_length']],
-            'query_date' : [datetime.datetime.now().strftime("%Y-%m-%d %H:%M")],
+            'query_date' : [datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
             })
         
     return data
