@@ -178,6 +178,7 @@ def update_topic_scores(db, collection, uid, data):
         # 'average_sentiment_interpretation' : firestore.ArrayUnion([data['average_sentiment_interpretation']]),
         'average_tweet_length' : firestore.ArrayUnion([data['average_tweet_length']]),
         'query_date' : firestore.ArrayUnion([data['query_date']]),
+        'query_count' : firestore.ArrayUnion([data['query_count']])
     })
 
 
@@ -238,6 +239,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         # 'average_sentiment_interpretation' : data['average_sentiment_interpretation'],
         'average_tweet_length' : data['average_tweet_length'],
         'query_date' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'query_count' : len(text_array)
     }
     
     if uid_ref.get().exists:
@@ -254,6 +256,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
             'average_sentiment' : [data['average_sentiment']],
             'average_tweet_length' : [data['average_tweet_length']],
             'query_date' : [datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
+            'query_count' : [len(text_array)]
             })
         
     return data
