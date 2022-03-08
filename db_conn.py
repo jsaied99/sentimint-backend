@@ -147,7 +147,7 @@ def analyze_multiple_texts(texts: list):
     
     texts = prune_list
     
-    print((texts))
+    # print((texts))
     
     remainder = len(texts) % THREADS
 
