@@ -132,8 +132,8 @@ def analyze_text_twitter(db, collection, uid, text, topic):
 def prune_text(texts):
     pruned_texts = []
     for text in texts:
-        text = re.sub(r"(?:\@|https?\://)\S+", "", text)
-        pruned_texts.append(text.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
+        t = re.sub(r"(?:\@|https?\://)\S+", "", text[0])
+        pruned_texts.append(t.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
     return pruned_texts
 
 def analyze_multiple_texts(texts: list):
@@ -214,12 +214,13 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
     for text, score in zip(text_array, scores):
         interpretation = get_text_sentiment_interpretation(score)
         data['texts'].append({
-            'tweet': text,
+            'tweet': text[0],
+            'lang': text[1],
             'score': score,
             'interpretation': interpretation
         })
         
-        average_tweet_length += len(text)
+        average_tweet_length += len(text[0])
         average_sentiment += score
     
     average_tweet_length /= len(text_array)
