@@ -132,8 +132,9 @@ def analyze_text_twitter(db, collection, uid, text, topic):
 def prune_text(texts):
     pruned_texts = []
     for text in texts:
-        t = re.sub(r"(?:\@|https?\://)\S+", "", text[0])
-        pruned_texts.append(t.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
+        pruned_texts.append(text[0])
+        # t = re.sub(r"(?:\@|https?\://)\S+", "", text[0])
+        # pruned_texts.append(t.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
     return pruned_texts
 
 def analyze_multiple_texts(texts: list):
@@ -143,6 +144,10 @@ def analyze_multiple_texts(texts: list):
     global TEXT_PER_THREAD
     
     prune_list = prune_text(texts)
+    
+    texts = prune_list
+    
+    print((texts))
     
     remainder = len(texts) % THREADS
 
