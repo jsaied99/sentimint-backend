@@ -10,6 +10,7 @@ import threading
 import re
 import statistics
 import datetime
+from languages import lang_key_conversion
 # imports for NLTK
 nltk.download('vader_lexicon')
 #imports for flair sentiment anal
@@ -21,22 +22,22 @@ TEXT_PER_THREAD = 10
 THREADS = 10
 
 
-lang_key_conversion = {
-    'en': 'English',
-    'es': 'Spanish',
-    'fr': 'French',
-    'fa': 'Persian',
-    'ar': 'Arabic',
-    'de': 'German',
-    'in': 'Hindi',
-    'it': 'Italian',
-    'ko': 'Korean',   
-    'pt': 'Portuguese',
-    'ru': 'Russian',
-    'und': 'Undetermined',
-    'sv': 'Swedish',
-    'no': 'Norwegian',
-}
+# lang_key_conversion = {
+#     'en': 'English',
+#     'es': 'Spanish',
+#     'fr': 'French',
+#     'fa': 'Persian',
+#     'ar': 'Arabic',
+#     'de': 'German',
+#     'in': 'Hindi',
+#     'it': 'Italian',
+#     'ko': 'Korean',   
+#     'pt': 'Portuguese',
+#     'ru': 'Russian',
+#     'und': 'Undetermined',
+#     'sv': 'Swedish',
+#     'no': 'Norwegian',
+# }
 
 def initialize_db():
 
