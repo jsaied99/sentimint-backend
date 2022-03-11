@@ -21,6 +21,23 @@ TEXT_PER_THREAD = 10
 THREADS = 10
 
 
+lang_key_conversion = {
+    'en': 'English',
+    'es': 'Spanish',
+    'fr': 'French',
+    'fa': 'Persian',
+    'ar': 'Arabic',
+    'de': 'German',
+    'in': 'Hindi',
+    'it': 'Italian',
+    'ko': 'Korean',   
+    'pt': 'Portuguese',
+    'ru': 'Russian',
+    'und': 'Undetermined',
+    'sv': 'Swedish',
+    'no': 'Norwegian',
+}
+
 def initialize_db():
 
     cred = credentials.Certificate(
@@ -135,10 +152,12 @@ def prune_text(texts):
     for text in texts:
         pruned_texts.append(text[0])
         
+        
+        key = lang_key_conversion[text[1]] if text[1] in lang_key_conversion else 'Undetermined'
         if text[1] not in langs:
-            langs[text[1]] = 1
+            langs[key] = 1
         else:
-            langs[text[1]] += 1
+            langs[key] += 1
         # t = re.sub(r"(?:\@|https?\://)\S+", "", text[0])
         # pruned_texts.append(t.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
     return pruned_texts, langs
