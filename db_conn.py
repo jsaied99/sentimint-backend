@@ -131,19 +131,26 @@ def analyze_text_twitter(db, collection, uid, text, topic):
 
 def prune_text(texts):
     pruned_texts = []
+    langs = {}
     for text in texts:
         pruned_texts.append(text[0])
+        
+        if text[1] not in langs:
+            langs[text[1]] = 1
+        else:
+            langs[text[1]] += 1
         # t = re.sub(r"(?:\@|https?\://)\S+", "", text[0])
         # pruned_texts.append(t.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
-    return pruned_texts
+    return pruned_texts, langs
 
 def analyze_multiple_texts(texts: list):
     analyzed_texts = []
     thread_pool = []
+    # langs = {}
 
     global TEXT_PER_THREAD
     
-    prune_list = prune_text(texts)
+    prune_list, langs = prune_text(texts)
     
     texts = prune_list
     
@@ -169,7 +176,7 @@ def analyze_multiple_texts(texts: list):
     for thread in thread_pool:
         thread.join()
 
-    return analyzed_texts
+    return analyzed_texts, langs
 
 
 def update_text_twitter(db, collection, uid, data):
@@ -193,7 +200,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
 
     #if PRODUCTION
     # text_array = get_all_texts()
-    scores = analyze_multiple_texts(text_array)
+    scores, lang_list = analyze_multiple_texts(text_array)
     #endif PRODUCTION
     average_tweet_length = 0
     average_sentiment = 0
@@ -207,6 +214,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         'tweet_count': len(text_array),
         'std': round(statistics.stdev(scores), 2),
         'query_date': '( ' + datetime.datetime.now().strftime("%Y-%m-%d") +  ' )',
+        'lang_list': lang_list,
         # population size
         # STD
     }
