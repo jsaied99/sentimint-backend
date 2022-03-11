@@ -12,7 +12,7 @@ app.config["CORS_HEADER"] = "Content-Type"
 
 def page_not_found(e):
   return jsonify({
-      "status": "error", 
+      "status": 0, 
       "message": "wrong path"}), 404
 
 app.register_error_handler(404, page_not_found)
@@ -35,33 +35,33 @@ def uui_request():
         })
 
 
-@app.route('/sentiment_data/<uid>', methods=['GET'])
-def get_sentiment_data(uid):
-    if hasattr(g, 'db'):
+# @app.route('/sentiment_data/<uid>', methods=['GET'])
+# def get_sentiment_data(uid):
+#     if hasattr(g, 'db'):
 
-        user_sentiment_data_list = db_conn.get_data_by_uid(
-            g.db, 'sentiment_data', uid)
+#         user_sentiment_data_list = db_conn.get_data_by_uid(
+#             g.db, 'sentiment_data', uid)
 
-        if user_sentiment_data_list:
-            return jsonify({"data": user_sentiment_data_list})
+#         if user_sentiment_data_list:
+#             return jsonify({"data": user_sentiment_data_list})
 
-        return jsonify({"No Data": []})
+#         return jsonify({"No Data": []})
 
-    return jsonify({"error": "No database connection"})
+#     return jsonify({"error": "No database connection"})
 
 
-@app.route('/sentiment_analysis', methods=['POST'])
-def analyze_data():
-    body = request.get_json()
-    text = body['text']
-    uid = body['uid']
-    start = time()
-    data = db_conn.analyze_text(g.db, u'users', uid, text)
+# @app.route('/sentiment_analysis', methods=['POST'])
+# def analyze_data():
+#     body = request.get_json()
+#     text = body['text']
+#     uid = body['uid']
+#     start = time()
+#     data = db_conn.analyze_text(g.db, u'users', uid, text)
 
-    return jsonify({
-        "data": data,
-        "execution_time": time() - start,
-        "success": 1})
+#     return jsonify({
+#         "data": data,
+#         "execution_time": time() - start,
+#         "status": 1})
 
 @app.route('/topic/<topic>', methods=['GET', 'POST'])
 def get_topic_data(topic):
@@ -102,7 +102,7 @@ def analyze_tweet_topic():
             return jsonify({
                 "data": [],
                 "error": "Limit must be between 10 and 100 and a multiple of 10",
-                "success": 0})
+                "status": 0})
         start = time()
         try:
             text_array = get_tweets(topic, limit)
@@ -111,17 +111,17 @@ def analyze_tweet_topic():
             return jsonify({
                 "data": data,
                 "execution_time": time() - start,
-                "success": 1})
+                "status": 1})
         except Exception as e:
             return jsonify({
                 "data": [],
                 "error": str(e),
-                "success": 0})
+                "status": 0})
     else:
         return jsonify({
             "data": [],
             "error": "Missing parameters",
-            "success": 0})
+            "status": 0})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
