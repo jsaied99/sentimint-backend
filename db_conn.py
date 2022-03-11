@@ -206,6 +206,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic):
         'average_sentiment_interpretation': '',
         'tweet_count': len(text_array),
         'std': round(statistics.stdev(scores), 2),
+        'query_date': '( ' + datetime.datetime.now().strftime("%Y-%m-%d") +  ' )',
         # population size
         # STD
     }
