@@ -1,3 +1,4 @@
+attrs==21.4.0
 CacheControl==0.12.10
 cachetools==4.2.4
 certifi==2021.10.8
@@ -20,6 +21,7 @@ grpcio==1.41.1
 grpcio-status==1.41.1
 httplib2==0.20.2
 idna==3.3
+iniconfig==1.1.1
 itsdangerous==2.0.1
 Jinja2==3.0.3
 joblib==1.1.0
@@ -27,15 +29,19 @@ MarkupSafe==2.0.1
 msgpack==1.0.2
 nltk==3.6.5
 packaging==21.2
+pluggy==1.0.0
 proto-plus==1.19.8
 protobuf==3.19.1
+py==1.11.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pyparsing==2.4.7
+pytest==6.2.5
 regex==2021.11.10
 requests==2.26.0
 rsa==4.7.2
 six==1.16.0
+toml==0.10.2
 tqdm==4.62.3
 uritemplate==4.1.1
 urllib3==1.26.7
