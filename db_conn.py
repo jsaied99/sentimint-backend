@@ -155,9 +155,11 @@ def prune_text(texts):
         
         
         key = lang_key_conversion[text[1]] if text[1] in lang_key_conversion else 'Undetermined'
-        if text[1] not in langs:
+        # print(key)
+        if key not in langs:
             langs[key] = 1
         else:
+            # print(langs[key])
             langs[key] += 1
         # t = re.sub(r"(?:\@|https?\://)\S+", "", text[0])
         # pruned_texts.append(t.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
