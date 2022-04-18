@@ -221,7 +221,7 @@ def update_topic_scores(db, collection, uid, data):
 
 algorithms = {
     'vader': analyze_multiple_texts,
-    'ntlk': analyze_multiple_texts,
+    'nltk': analyze_multiple_texts,
     'svr': analyze_multiple_texts,
 }
 
