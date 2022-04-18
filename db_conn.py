@@ -22,6 +22,7 @@ TEXT_PER_THREAD = 10
 THREADS = 10
 
 
+
 # lang_key_conversion = {
 #     'en': 'English',
 #     'es': 'Spanish',
@@ -143,8 +144,10 @@ def analyze_text(db, collection, uid, text):
     return update_doc(db, collection, uid, text)
 
 
-def analyze_text_twitter(db, collection, uid, text, topic):
-    return update_doc_twitter(db, collection, uid, text, topic)
+
+
+def analyze_text_twitter(db, collection, uid, text, topic, algorithm):
+    return update_doc_twitter(db, collection, uid, text, topic, algorithm)
 
 
 def prune_text(texts):
@@ -216,13 +219,20 @@ def update_topic_scores(db, collection, uid, data):
     })
 
 
-def update_doc_twitter(db, collection, uid, text_array, topic):
+algorithms = {
+    'vader': analyze_multiple_texts,
+    'ntlk': analyze_multiple_texts,
+    'svr': analyze_multiple_texts,
+}
+
+def update_doc_twitter(db, collection, uid, text_array, topic, algorithm):
     
     uid_ref = db.collection(collection).document(uid)
 
     #if PRODUCTION
-    # text_array = get_all_texts()
-    scores, lang_list = analyze_multiple_texts(text_array)
+    # text_array = get_all_texts():
+    
+    scores, lang_list = algorithms[algorithm](text_array)
     #endif PRODUCTION
     average_tweet_length = 0
     average_sentiment = 0

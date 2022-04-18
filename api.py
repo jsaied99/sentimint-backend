@@ -106,8 +106,8 @@ def analyze_tweet_topic():
         start = time()
         try:
             text_array = get_tweets(topic, limit)
-
-            data = db_conn.analyze_text_twitter(g.db, u'users', uid, text_array, topic)
+            algorithm = body['algorithm'] if 'algorithm' in body.keys() else 'vader'
+            data = db_conn.analyze_text_twitter(g.db, u'users', uid, text_array, topic,algorithm)
             return jsonify({
                 "data": data,
                 "execution_time": time() - start,
