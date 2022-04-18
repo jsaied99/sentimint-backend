@@ -247,6 +247,7 @@ def update_doc_twitter(db, collection, uid, text_array, topic, algorithm):
         'std': round(statistics.stdev(scores), 2),
         'query_date': '( ' + datetime.datetime.now().strftime("%Y-%m-%d") +  ' )',
         'lang_list': lang_list,
+        'algorithm': algorithm,
         # population size
         # STD
     }
