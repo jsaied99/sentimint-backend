@@ -5,7 +5,7 @@ from time import time
 from twitter_api import get_tweets
 import werkzeug
 app = Flask(__name__)
-
+# model 
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config["CORS_HEADER"] = "Content-Type"

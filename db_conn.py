@@ -11,6 +11,7 @@ import re
 import statistics
 import datetime
 from languages import lang_key_conversion
+import log_reg as lr
 # imports for NLTK
 nltk.download('vader_lexicon')
 #imports for flair sentiment anal
@@ -20,6 +21,8 @@ nltk.download('vader_lexicon')
 SCORE_ARRAY = []
 TEXT_PER_THREAD = 10
 THREADS = 10
+model_file_name = "models/log_reg_model.pkl"
+model = lr.load_model(model_file_name)
 
 
 
@@ -116,14 +119,25 @@ def get_text_sentiment(text):
 #     sentence = Sentence(text)
 #     classifier.predict(sentence)
 #     return sentence.labels
-
-
-def get_text_sentiment_thread(text, analyzed_texts):
-    sid = SentimentIntensityAnalyzer()
-
-    for t in text:
-        analyzed_texts.append( int((sid.polarity_scores(t)['compound']) * 100) )
-
+convert_prediction = {
+    0: 1 * 100,
+    1: -1 * 100,
+    2: 0
+}
+# "positive": 0, "negative": 1, "neutral": 2
+def get_text_sentiment_thread(text, analyzed_texts, algorithm):
+    if algorithm == 'vader':
+        sid = SentimentIntensityAnalyzer()
+        for t in text:
+            analyzed_texts.append( int((sid.polarity_scores(t)['compound']) * 100) )
+    elif algorithm == 'lr':
+    
+        for t in text:
+            prediction = lr.predict_on_single_input(t, model)
+            
+            prediction = convert_prediction[int(prediction)]
+            
+            analyzed_texts.append(prediction)
 
 def get_text_sentiment_interpretation(score):
     if score > 60:
@@ -154,8 +168,14 @@ def prune_text(texts):
     pruned_texts = []
     langs = {}
     for text in texts:
-        pruned_texts.append(text[0])
         
+        language_name = lang_key_conversion[text[1]] if text[1] in lang_key_conversion else 'Undetermined'
+        
+        # if language_name != 'Undetermined' and language_name != 'English':
+        #     translated_tweet = magic_daniel_func(text[0], language_name)
+        #     if translated_tweet:
+        #         pruned_texts.append(translated_tweet)
+        pruned_texts.append(text[0])
         
         key = lang_key_conversion[text[1]] if text[1] in lang_key_conversion else 'Undetermined'
         # print(key)
@@ -168,7 +188,7 @@ def prune_text(texts):
         # pruned_texts.append(t.replace('\n', ' ').replace('\t', ' ').replace('\r', ' '))
     return pruned_texts, langs
 
-def analyze_multiple_texts(texts: list):
+def analyze_multiple_texts(texts: list, algorithm: str):
     analyzed_texts = []
     thread_pool = []
     # langs = {}
@@ -189,11 +209,11 @@ def analyze_multiple_texts(texts: list):
 
     for i in range(THREADS):
         thread_pool.append(threading.Thread(
-            target=get_text_sentiment_thread, args=(texts[i*TEXT_PER_THREAD:(i+1)*TEXT_PER_THREAD], analyzed_texts)))
+            target=get_text_sentiment_thread, args=(texts[i*TEXT_PER_THREAD:(i+1)*TEXT_PER_THREAD], analyzed_texts, algorithm)))
         
     if remainder != 0:
         thread_pool.append(threading.Thread(
-            target=get_text_sentiment_thread, args=(texts[THREADS*TEXT_PER_THREAD:], analyzed_texts)))
+            target=get_text_sentiment_thread, args=(texts[THREADS*TEXT_PER_THREAD:], analyzed_texts, algorithm)))
 
     for thread in thread_pool:
         thread.start()
@@ -219,21 +239,11 @@ def update_topic_scores(db, collection, uid, data):
     })
 
 
-algorithms = {
-    'vader': analyze_multiple_texts,
-    'nltk': analyze_multiple_texts,
-    'svr': analyze_multiple_texts,
-}
-
 def update_doc_twitter(db, collection, uid, text_array, topic, algorithm):
     
     uid_ref = db.collection(collection).document(uid)
 
-    #if PRODUCTION
-    # text_array = get_all_texts():
-    
-    scores, lang_list = algorithms[algorithm](text_array)
-    #endif PRODUCTION
+    scores, lang_list = analyze_multiple_texts(text_array, algorithm)
     average_tweet_length = 0
     average_sentiment = 0
     
@@ -356,3 +366,7 @@ def get_all_topics(db, collection):
             topic.id: topic.to_dict()
             })
     return topics_list
+
+if __name__ == '__main__':
+    prediction = lr.predict_on_single_input("I'm cool", model)
+    print(prediction)
