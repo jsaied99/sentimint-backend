@@ -1,7 +1,9 @@
 import requests
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
-bearer_token = os.environ["TWITTER_API_KEY"]
+bearer_token = os.getenv("TWITTER_API_KEY")
 
 def get_tweets(topic: str, limit=10) -> list:
     base_url = "https://api.twitter.com/2/tweets/search/recent?query={}&max_results={}&tweet.fields=lang".format(
