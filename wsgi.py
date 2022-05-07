@@ -12,8 +12,9 @@ if __name__ == '__main__':
         http_server = WSGIServer(
                         ('', port), app, keyfile=path + 'privkey.pem', certfile=path + 'fullchain.pem')
         http_server.serve_forever()
-    elif running == 'test':
+    elif running == 'local':
+        print('Server running on port 5001')
         http_server = WSGIServer(
-                        ('', 5000), app, keyfile=None, certfile=None)
+                        ('', 5001), app, keyfile=None, certfile=None)
         http_server.serve_forever()
-        print('Server running on port 5000')
+        
