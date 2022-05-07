@@ -12,6 +12,7 @@ import statistics
 import datetime
 from languages import lang_key_conversion
 import log_reg as lr
+import SVM.SentiMintSVM as svm
 # imports for NLTK
 nltk.download('vader_lexicon')
 #imports for flair sentiment anal
@@ -23,6 +24,7 @@ TEXT_PER_THREAD = 10
 THREADS = 10
 model_file_name = "models/log_reg_model.pkl"
 model = lr.load_model(model_file_name)
+svm_model = svm.sentimintSVM()
 
 
 
@@ -138,6 +140,10 @@ def get_text_sentiment_thread(text, analyzed_texts, algorithm):
             prediction = convert_prediction[int(prediction)]
             
             analyzed_texts.append(prediction)
+    elif algorithm == 'svm':
+        
+        for t in text:
+            analyzed_texts.append(int(svm_model.predict(t)))
 
 def get_text_sentiment_interpretation(score):
     if score > 60:

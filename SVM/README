@@ -1,0 +1,7 @@
+The only files needed are vocab.tfidf, model.svm, and SentiMintSVM.py
+
+To use the SVM predictor you will need to import SntiMintSVM.py amd create a sntimintSVM object.
+You then call the predict function from that object and pass the string to be analyzed. 
+You can see test.py for an example
+
+vocab.tfidf and model.svm should be in the same directory as SentiMintSVM.py and should NOT be renamed
