@@ -25,6 +25,10 @@ THREADS = 10
 model_file_name = "models/log_reg_model.pkl"
 model = lr.load_model(model_file_name)
 svm_model = svm.sentimintSVM()
+import requests
+itranslate_key = "5468a42b-b246-41d2-ba72-ce33544448be"
+itranslate_url = "https://dev-api.itranslate.com/translation/v2/"
+itranslate_headers = {"Authorization": "Bearer 8b2f1a2a-f888-46ef-aae5-20337e5fcde6", "Content-Type": "application/json"}
 
 
 
@@ -177,11 +181,15 @@ def prune_text(texts):
         
         language_name = lang_key_conversion[text[1]] if text[1] in lang_key_conversion else 'Undetermined'
         
-        # if language_name != 'Undetermined' and language_name != 'English':
-        #     translated_tweet = magic_daniel_func(text[0], language_name)
-        #     if translated_tweet:
-        #         pruned_texts.append(translated_tweet)
-        pruned_texts.append(text[0])
+        if language_name != 'Undetermined' and language_name != 'English':
+            itranslate_body = {
+                "source": {"dialect": "auto", "text": text[0]},
+                "target": {"dialect": "en"}
+            }
+            response = requests.post(itranslate_url,json=itranslate_body,headers=itranslate_headers)
+            pruned_texts.append(response.text)
+        else:
+            pruned_texts.append(text[0])
         
         key = lang_key_conversion[text[1]] if text[1] in lang_key_conversion else 'Undetermined'
         # print(key)
