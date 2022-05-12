@@ -187,7 +187,7 @@ def prune_text(texts):
                 "target": {"dialect": "en"}
             }
             response = requests.post(itranslate_url,json=itranslate_body,headers=itranslate_headers)
-            pruned_texts.append(response.text)
+            pruned_texts.append(response.json()["target"]["text"])
         else:
             pruned_texts.append(text[0])
         
